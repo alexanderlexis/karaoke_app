@@ -8,8 +8,12 @@ class Profile extends Model
 {
     public $primaryKey = 'profile_id';
 
+    protected $fillable = [
+        'title'
+    ];
+
     public function user()
     {
-        return $this->belongsToMany('App\User', 'users');
+        return $this->belongsToMany('App\User');
     }
 }
