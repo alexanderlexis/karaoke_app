@@ -11,9 +11,13 @@
 |
 */
 
-Route::get('/', 'PagesController@index');
+Route::get('/', 'PagesController@index')->name('enter');
 Route::get('/admin', 'PagesController@admin');
+
+Route::get('/songs', 'SongsController@overview');
+Route::get('/songs/add', 'SongsController@addSong');
+Route::get('/songs/edit/{song_id}', 'SongsController@editSong');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index');

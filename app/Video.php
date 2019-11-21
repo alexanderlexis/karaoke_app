@@ -16,4 +16,9 @@ class Video extends Model
     {
         return $this->belongsTo('App\Company');
     }
+
+    public function song()
+    {
+        return $this->belongsTo('App\Song', 'video_id');
+    }
 }

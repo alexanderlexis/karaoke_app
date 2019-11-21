@@ -17,11 +17,11 @@ class Song extends Model
 
     public function artist()
     {
-        return $this->belongsTo('App/Artist');
+        return $this->hasOne('App\Artist', 'artist_id');
     }
 
     public function video()
     {
-        return $this->belongsTo('App/Video');
+        return $this->hasOne('App\Video', 'video_id');
     }
 }
