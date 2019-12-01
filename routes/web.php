@@ -16,6 +16,7 @@ Route::get('/admin', 'PagesController@admin');
 
 Route::get('/songs', 'SongsController@overview');
 Route::get('/songs/add', 'SongsController@addSong');
+Route::post('/songs/add', 'SongsController@addSong');
 Route::get('/songs/edit/{song_id}', 'SongsController@editSong');
 
 Auth::routes();

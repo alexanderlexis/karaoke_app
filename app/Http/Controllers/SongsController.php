@@ -7,9 +7,19 @@ use Illuminate\Http\Request;
 
 class SongsController extends Controller
 {
-    public function addSong($request)
+    public function addSong(Request $request)
     {
+        if($request->getMethod() == 'POST'){
+            $this->validate($request, array(
 
+            ));
+        } else {
+
+        }
+
+        return view('songs.addSong')->with(array(
+
+        ));
     }
 
     public function deleteSong($song_id)
