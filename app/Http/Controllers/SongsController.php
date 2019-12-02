@@ -36,6 +36,8 @@ class SongsController extends Controller
     {
         $songs = Song::with(['video', 'artist'])->get();
 
+        dump($songs->toArray());
+
         return view('songs.overview')->with(array(
             'songs' => $songs
         ));
