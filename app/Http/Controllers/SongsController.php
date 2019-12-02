@@ -11,8 +11,16 @@ class SongsController extends Controller
     {
         if($request->getMethod() == 'POST'){
             $this->validate($request, array(
-
+                'title' => 'required',
+                'artist' => 'required',
+                'video' => 'required',
+                'part' => 'required',
+                'url' => 'required'
             ));
+
+            $song = new Song;
+            dump($request->input());
+
         } else {
 
         }
