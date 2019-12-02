@@ -12,6 +12,10 @@
             {{ Form::text('title', '', array('class' => 'form-control', 'placeholder' => 'Titel')) }}
         </div>
         <div class="form-group">
+            {{ Form::label('company', 'Company') }}
+            {{ Form::text('company', '', array('class' => 'form-control', 'placeholder' => 'Company')) }}
+        </div>
+        <div class="form-group">
             {{ Form::label('video', 'Video') }}
             {{ Form::text('video', '', array('class' => 'form-control', 'placeholder' => 'Video')) }}
         </div>

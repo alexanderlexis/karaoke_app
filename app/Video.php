@@ -12,6 +12,11 @@ class Video extends Model
         'name', 'company_id',
     ];
 
+    public function getTitlesByVideoId()
+    {
+        return $this::all()->pluck('name', 'video_id')->toArray();
+    }
+
     public function company()
     {
         return $this->belongsTo('App\Company');

@@ -12,6 +12,11 @@ class Company extends Model
         'name',
     ];
 
+    public function getNameByCompanyId()
+    {
+        $this::all()->pluck('name', 'company_id')->toArray();
+    }
+
     public function videos()
     {
         return $this->hasMany('App/Video');
