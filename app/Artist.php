@@ -12,6 +12,11 @@ class Artist extends Model
         'name',
     ];
 
+    public function getNamesByArtistId()
+    {
+        return $this::all()->pluck('name', 'artist_id')->toArray();
+    }
+
     public function song()
     {
         return $this->belongsTo('App\Song', 'artist_id');

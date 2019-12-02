@@ -25,12 +25,12 @@ class SongsController extends Controller
             ));
 
             // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
-            $companies = Company::all()->pluck('name', 'company_id')->toArray();
+            $company = new Company;
+            $companies = $company->getNameByCompanyId();
 
             if(in_array($request->input('company'), $companies)){
                 $companyKey =  array_search($request->input('company'), $companies);
             } else {
-                $company = new Company;
                 $company->name = $request->input('company');
                 if($company->save()){
                     $companyKey = $company->company_id;
@@ -38,12 +38,12 @@ class SongsController extends Controller
             }
 
             // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
-            $videoTitles = Video::all()->pluck('name', 'video_id')->toArray();
+            $video = new Video;
+            $videoTitles = $video->getTitlesByVideoId();
 
             if(in_array($request->input('video'), $videoTitles)){
                 $videoKey =  array_search($request->input('video'), $videoTitles);
             } else {
-                $video = new Video;
                 $video->name = $request->input('video');
                 $video->company_id = $companyKey;
                 if($video->save()){
@@ -52,12 +52,12 @@ class SongsController extends Controller
             }
 
             // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
-            $artistNames = Artist::all()->pluck('name', 'artist_id')->toArray();
+            $artist = new Artist;
+            $artistNames = $artist->getNamesByArtistId();
 
             if(in_array($request->input('artist'), $artistNames)){
                 $artistKey =  array_search($request->input('artist'), $artistNames);
             } else {
-                $artist = new Artist;
                 $artist->name = $request->input('artist');
                 if($artist->save()) {
                     $artistKey = $artist->artist_id;
