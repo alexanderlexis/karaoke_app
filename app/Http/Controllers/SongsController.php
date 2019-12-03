@@ -14,64 +14,58 @@ class SongsController extends Controller
     public function addSong(Request $request)
     {
         // If the form is submitted
-        if($request->getMethod() == 'POST'){
+        if($request->getMethod() == 'POST') {
 
-            $this->validate($request, array(
+            if (
+            $this->validate($request, [
                 'artist' => 'required',
                 'title' => 'required',
                 'video' => 'required',
+                'company' => 'required',
                 'part' => 'required',
                 'url' => 'required'
-            ));
+            ])
+            ) {
 
-            // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
-            $company = new Company;
-            $companies = $company->getNameByCompanyId();
+                // TODO: check firstorcreate();
 
-            if(in_array($request->input('company'), $companies)){
-                $companyKey =  array_search($request->input('company'), $companies);
-            } else {
-                $company->name = $request->input('company');
-                if($company->save()){
-                    $companyKey = $company->company_id;
+                // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
+                $company = Company::all()->where('name', '=', $request->input('company'));
+
+                if ($company->isEmpty()) {
+                    $company = new Company;
+                    $company->name = $request->input('company');
+                    $company->save();
                 }
-            }
 
-            // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
-            $video = new Video;
-            $videoTitles = $video->getTitlesByVideoId();
+                // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
+                $video = Video::all()->where('name', '=', $request->input('video'));
 
-            if(in_array($request->input('video'), $videoTitles)){
-                $videoKey =  array_search($request->input('video'), $videoTitles);
-            } else {
-                $video->name = $request->input('video');
-                $video->company_id = $companyKey;
-                if($video->save()){
-                    $videoKey = $video->video_id;
+                if ($video->isEmpty()) {
+                    $video = new Video;
+                    $video->name = $request->input('video');
+                    $video->company()->associate($company);
+                    $video->save();
                 }
-            }
 
-            // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
-            $artist = new Artist;
-            $artistNames = $artist->getNamesByArtistId();
+                // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
+                $artist = Artist::all()->where('name', '=', $request->input('artist'));
 
-            if(in_array($request->input('artist'), $artistNames)){
-                $artistKey =  array_search($request->input('artist'), $artistNames);
-            } else {
-                $artist->name = $request->input('artist');
-                if($artist->save()) {
-                    $artistKey = $artist->artist_id;
+                if ($artist->isEmpty()) {
+                    $artist = new Artist;
+                    $artist->name = $request->input('artist');
+                    $artist->save();
                 }
-            }
 
-            // Save the new song
-            $song = new Song;
-            $song->artist_id = $artistKey;
-            $song->title = $request->input('title');
-            $song->video_id = $videoKey;
-            $song->part = $request->input('part');
-            $song->url = $request->input('url');
-            $song->save();
+                // Save the new song
+                $song = new Song;
+                $song->title = $request->input('title');
+                $song->part = $request->input('part');
+                $song->url = $request->input('url');
+                $song->artist()->associate($artist);
+                $song->video()->associate($video);
+                $song->save();
+            }
         }
 
         return view('songs.addSong')->with(array(
@@ -91,7 +85,12 @@ class SongsController extends Controller
 
     public function overview()
     {
-        $songs = Song::with(['video', 'artist'])->get();
+        $songs = Song::with(['video', 'artist'])->get()->toArray();
+
+        foreach($songs as $song){
+            dump($song);
+        }
+        die;
 
         return view('songs.overview')->with(array(
             'songs' => $songs

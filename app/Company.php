@@ -12,9 +12,9 @@ class Company extends Model
         'name',
     ];
 
-    public function getNameByCompanyId()
+    public function getNamesByCompanyId()
     {
-        $this::all()->pluck('name', 'company_id')->toArray();
+        return $this::all()->pluck('name', 'company_id')->toArray();
     }
 
     public function videos()

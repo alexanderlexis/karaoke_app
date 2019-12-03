@@ -9,7 +9,8 @@ class Video extends Model
     public $primaryKey = 'video_id';
 
     protected $fillable = [
-        'name', 'company_id',
+        'name',
+        'company_id'
     ];
 
     public function getTitlesByVideoId()
@@ -19,11 +20,11 @@ class Video extends Model
 
     public function company()
     {
-        return $this->belongsTo('App\Company');
+        return $this->belongsTo('App\Company', 'company_id');
     }
 
     public function song()
     {
-        return $this->belongsTo('App\Song', 'video_id');
+        return $this->hasMany('App\Song', 'video_id');
     }
 }
