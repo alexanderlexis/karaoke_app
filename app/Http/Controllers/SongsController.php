@@ -8,6 +8,7 @@ use App\Video;
 use App\Artist;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SongsController extends Controller
 {
@@ -26,45 +27,41 @@ class SongsController extends Controller
                 'url' => 'required'
             ])
             ) {
+                //TODO: flash message in exception
 
-                // TODO: check firstorcreate();
+                try {
+                    DB::transaction(function () use ($request) {
+                        // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
+                        $company = Company::firstOrCreate(['name' => $request->input('company')]);
 
-                // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
-                $company = Company::all()->where('name', '=', $request->input('company'));
+                        // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
+                        $video = Video::firstOrCreate([
+                            'name' => $request->input('video'),
+                            'company_id' => $company['company_id']
+                        ]);
 
-                if ($company->isEmpty()) {
-                    $company = new Company;
-                    $company->name = $request->input('company');
-                    $company->save();
+                        // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
+                        $artist = Artist::firstOrCreate([
+                            'name' => $request->input('artist')
+                        ]);
+
+                        // Save the new song
+                        $song = new Song;
+                        $song->title = $request->input('title');
+                        $song->part = $request->input('part');
+                        $song->url = $request->input('url');
+                        $song->artist()->associate($artist);
+                        $song->video()->associate($video);
+                        if ($song->save()) {
+                            return redirect('songs');
+                        }
+                    });
+                } catch (\Exception $e){
+
+                    return redirect('songs/add');
+
                 }
 
-                // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
-                $video = Video::all()->where('name', '=', $request->input('video'));
-
-                if ($video->isEmpty()) {
-                    $video = new Video;
-                    $video->name = $request->input('video');
-                    $video->company()->associate($company);
-                    $video->save();
-                }
-
-                // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
-                $artist = Artist::all()->where('name', '=', $request->input('artist'));
-
-                if ($artist->isEmpty()) {
-                    $artist = new Artist;
-                    $artist->name = $request->input('artist');
-                    $artist->save();
-                }
-
-                // Save the new song
-                $song = new Song;
-                $song->title = $request->input('title');
-                $song->part = $request->input('part');
-                $song->url = $request->input('url');
-                $song->artist()->associate($artist);
-                $song->video()->associate($video);
-                $song->save();
             }
         }
 
@@ -85,12 +82,7 @@ class SongsController extends Controller
 
     public function overview()
     {
-        $songs = Song::with(['video', 'artist'])->get()->toArray();
-
-        foreach($songs as $song){
-            dump($song);
-        }
-        die;
+        $songs = Song::with(['video', 'artist'])->get();
 
         return view('songs.overview')->with(array(
             'songs' => $songs
