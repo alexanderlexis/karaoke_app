@@ -31,16 +31,13 @@ class SongsController extends Controller
 
                 try {
                     DB::transaction(function () use ($request) {
-                        // Get all company names. Create a new one if the song belongs to a new company, else insert the correct company_id into the request input
                         $company = Company::firstOrCreate(['name' => $request->input('company')]);
 
-                        // Get all video titles. Create a new one if the song belongs to a new video, else insert the correct video_id into the request input
                         $video = Video::firstOrCreate([
                             'name' => $request->input('video'),
                             'company_id' => $company['company_id']
                         ]);
 
-                        // Get all artist names. Create a new one if the song belongs to a new artist, else insert the correct artist_id into the request input
                         $artist = Artist::firstOrCreate([
                             'name' => $request->input('artist')
                         ]);
@@ -72,7 +69,10 @@ class SongsController extends Controller
 
     public function deleteSong($song_id)
     {
+        $post = Song::find($song_id);
+        $post->delete();
 
+        return redirect('songs')->with('success', 'Nummer verwijderd');
     }
 
     public function editSong($song_id)

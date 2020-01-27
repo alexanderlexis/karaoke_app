@@ -19,20 +19,18 @@
                     <th>
                         Titel
                     </th>
-{{--                    <th>--}}
-{{--                        Video--}}
-{{--                    </th>--}}
-{{--                    <th>--}}
-{{--                        Part--}}
-{{--                    </th>--}}
                 </tr>
             </thead>
             @foreach($songs as $song)
                 <tr>
                     <td>{{$song->artist->name}}</td>
                     <td>{{$song->title}}</td>
-{{--                    <td>{{$song->video->name}}</td>--}}
-{{--                    <td>{{$song->part}}</td>--}}
+                    <td>
+                        {!! Form::open(array('action' => array('SongsController@deleteSong', $song->song_id), 'method' => 'POST', 'class' => 'deleteSongForm float-right', 'onSubmit' => 'return confirm("Wil je \"' . $song->title . '\" verwijderen?")')) !!}
+                            {{Form::hidden('_method', 'DELETE')}}
+                            {{Form::submit('Verwijderen', array('class' => 'btn btn-danger'))}}
+                        {!! Form::close() !!}
+                    </td>
                 </tr>
             @endforeach
         </table>
