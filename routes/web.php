@@ -20,6 +20,8 @@ Route::post('/songs/add', 'SongsController@addSong');
 Route::post('/songs/delete/{song_id}', 'SongsController@deleteSong');
 Route::delete('/songs/delete/{song_id}', 'SongsController@deleteSong');
 Route::get('/songs/edit/{song_id}', 'SongsController@editSong');
+Route::get('/songs/viewSong/{song_id}', 'SongsController@viewSong');
+Route::get('/songrequests/new/{song_id}', 'SongRequestsController@createRequest');
 
 Auth::routes();
 

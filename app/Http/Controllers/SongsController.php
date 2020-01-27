@@ -12,6 +12,15 @@ use Illuminate\Support\Facades\DB;
 
 class SongsController extends Controller
 {
+    public function overview()
+    {
+        $songs = Song::with(['video', 'artist'])->get();
+
+        return view('songs.overview')->with(array(
+            'songs' => $songs
+        ));
+    }
+
     public function addSong(Request $request)
     {
         // If the form is submitted
@@ -49,28 +58,39 @@ class SongsController extends Controller
                         $song->url = $request->input('url');
                         $song->artist()->associate($artist);
                         $song->video()->associate($video);
-                        if ($song->save()) {
-                            return redirect('songs');
+                        if($song->save()) {
+                            return redirect('/songs')->with(
+                                'success', 'Nummer toegevoegd'
+                            );
                         }
                     });
                 } catch (\Exception $e){
 
-                    return redirect('songs/add');
+                    return redirect('/songs/add')->with(
+                        'error', 'Er ging iets verkeerd met het opslaan van het nummer'
+                    );
 
                 }
-
             }
         }
 
-        return view('songs.addSong')->with(array(
+        return view('songs.addSong');
 
+    }
+
+    public function viewSong($song_id)
+    {
+        $song = Song::find($song_id);
+
+        return view('songs.viewSong')->with(array(
+            'song' => $song
         ));
     }
 
     public function deleteSong($song_id)
     {
-        $post = Song::find($song_id);
-        $post->delete();
+        $song = Song::find($song_id);
+        $song->delete();
 
         return redirect('songs')->with('success', 'Nummer verwijderd');
     }
@@ -78,14 +98,5 @@ class SongsController extends Controller
     public function editSong($song_id)
     {
 
-    }
-
-    public function overview()
-    {
-        $songs = Song::with(['video', 'artist'])->get();
-
-        return view('songs.overview')->with(array(
-            'songs' => $songs
-        ));
     }
 }

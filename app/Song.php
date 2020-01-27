@@ -25,4 +25,5 @@ class Song extends Model
     {
         return $this->belongsTo('App\Video', 'video_id');
     }
+
 }

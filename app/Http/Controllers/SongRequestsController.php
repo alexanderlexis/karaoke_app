@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 
 class SongRequestsController extends Controller
 {
-    public function createRequest($request)
+    public function createRequest($song_id)
     {
 
     }

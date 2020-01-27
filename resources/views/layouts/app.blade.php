@@ -33,7 +33,7 @@
         @endif
 
         <main class="py-4 container">
-            @include('inc.messages')
+            @include('flash-message')
             @yield('content')
         </main>
     </div>
